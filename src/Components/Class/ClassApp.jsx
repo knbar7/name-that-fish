@@ -27,64 +27,38 @@ export class ClassApp extends Component {
   state = {
     incorrectCount: 0,
     correctCount: 0,
-    showFinalScore: false,
     fishIndex: 0,
-    answer: "",
   };
 
-  incrementCount = (countType) => {
-    this.setState((prevState) => ({
-      [countType]: prevState[countType] + 1,
-    }));
-  };
-
-  changeFish = () => {
+  handleAnswer = (fishName) => {
+    if (fishName === initialFishes[this.state.fishIndex].name) {
+      this.setState((prevState) => ({
+        correctCount: prevState.correctCount + 1,
+      }));
+    } else {
+      this.setState((prevState) => ({
+        incorrectCount: prevState.incorrectCount + 1,
+      }));
+    }
     this.setState((prevState) => ({
       fishIndex: prevState.fishIndex + 1,
     }));
   };
-
-  handleFinalScore = () => {
-    this.setState({
-      showFinalScore: true,
-    });
-  };
-
-  submitHandler = (e) => {
-    e.preventDefault();
-    const { fishIndex, answer } = this.state;
-  
-    if (initialFishes[fishIndex]?.name === answer) {
-      this.incrementCount("correctCount");
-    } else {
-      this.incrementCount("incorrectCount");
-    }
-    if (fishIndex < initialFishes.length - 1) {
-      this.changeFish();
-      this.setState({
-        answer: "",
-      });
-    } else {
-      this.handleFinalScore();
-      this.setState({
-        showFinalScore: true, // Set showFinalScore to true
-      });
-    }
-  };
-  
   
 
   render() {
-    const { incorrectCount, correctCount, showFinalScore, fishIndex, answer } =
-      this.state;
-
+    const { incorrectCount, correctCount, fishIndex } = this.state;
     const totalCount = initialFishes.length;
+    const showFinalScore = this.state.fishIndex === initialFishes.length;
+
+    const fishRemaining = initialFishes
+      .filter((_, index) => index >= fishIndex)
+      .map((fish) => fish.name);
 
     return (
       <>
         {showFinalScore ? (
           <ClassFinalScore
-            incorrectCount={incorrectCount}
             correctCount={correctCount}
             totalCount={totalCount}
           />
@@ -93,13 +67,11 @@ export class ClassApp extends Component {
             <ClassScoreBoard
               incorrectCount={incorrectCount}
               correctCount={correctCount}
-              incrementCount={this.incrementCount}
+              fishRemaining={fishRemaining}
             />
             <ClassGameBoard
               fish={initialFishes[fishIndex]}
-              onSubmit={this.submitHandler}
-              answer={answer}
-              setAnswer={(value) => this.setState({ answer: value })}
+              handleAnswer={this.handleAnswer}
             />
           </>
         )}

@@ -1,11 +1,18 @@
-import React from "react";
+import React, { useState } from "react";
 
 export function FunctionalGameBoard(props) {
-  const { answer, setAnswer, fish, onSubmit } = props; // Destructure the props
+  const { fish, handleAnswer } = props; // Destructure the props
+  const [answer, setAnswer] = useState(""); // Add the answer state
 
   const changeAnswer = (e) => {
     setAnswer(e.target.value);
   };
+
+  const onSubmit = (e) => {
+    e.preventDefault();
+    handleAnswer(answer);
+    setAnswer('');
+  }
 
   return (
     <div id="game-board">

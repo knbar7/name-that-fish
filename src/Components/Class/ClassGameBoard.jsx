@@ -1,13 +1,22 @@
 import React, { Component } from "react";
 import "./styles/game-board.css";
-import { Images } from "../../assets/Images";
 
 export class ClassGameBoard extends Component {
+  state = {
+    answer: "",
+  };
+
   render() {
-    const { fish, answer, setAnswer, onSubmit } = this.props;
+    const { fish, handleAnswer } = this.props;
 
     const changeAnswer = (e) => {
-      setAnswer(e.target.value);
+      this.setState({ answer: e.target.value });
+    };
+
+    const onSubmit = (e) => {
+      e.preventDefault();
+      handleAnswer(this.state.answer);
+      this.setState({ answer: "" });
     };
 
     return (
@@ -20,7 +29,7 @@ export class ClassGameBoard extends Component {
           <input
             type="text"
             name="fish-guess"
-            value={answer}
+            value={this.state.answer}
             onChange={changeAnswer}
           />
           <input type="submit" />
